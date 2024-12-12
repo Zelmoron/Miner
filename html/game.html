@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <style>
+        body {
+            margin: 0;
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            background: linear-gradient(135deg, #e0f7ff 0%, #87CEEB 100%);
+            font-family: Arial, sans-serif;
+        }
+
+        .header {
+            padding: 20px;
+            background: rgba(255, 255, 255, 0.9);
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            display: flex;
+            justify-content: flex-end;
+            align-items: center;
+        }
+
+        .user-info {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            color: #4169E1;
+            font-size: 18px;
+        }
+
+        .user-avatar {
+            width: 40px;
+            height: 40px;
+            background: linear-gradient(45deg, #4169E1, #87CEEB);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: bold;
+        }
+
+        .main-content {
+            flex: 1;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .start-button {
+            padding: 20px 50px;
+            font-size: 24px;
+            border: none;
+            border-radius: 15px;
+            background: linear-gradient(45deg, #4169E1, #87CEEB);
+            color: white;
+            cursor: pointer;
+            position: relative;
+            overflow: hidden;
+            transition: transform 0.3s;
+            box-shadow: 0 4px 15px rgba(65, 105, 225, 0.3);
+        }
+
+        .start-button:hover {
+            transform: translateY(-3px);
+        }
+
+        .start-button::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(
+                90deg,
+                rgba(255, 255, 255, 0) 0%,
+                rgba(255, 255, 255, 0.3) 50%,
+                rgba(255, 255, 255, 0) 100%
+            );
+            animation: shine 3s infinite;
+        }
+
+        @keyframes shine {
+            to {
+                left: 100%;
+            }
+        }
+
+        .start-button:active {
+            transform: translateY(1px);
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <div class="user-info">
+            <div class="user-avatar">П</div>
+            <span>Пользователь</span>
+        </div>
+    </div>
+    <div class="main-content">
+        <button class="start-button">Начать игру</button>
+    </div>
+
+    <script>
+        // Добавляем эффект перелива для кнопки
+        const button = document.querySelector('.start-button');
+        
+        button.addEventListener('mousemove', (e) => {
+            const rect = button.getBoundingClientRect();
+            const x = e.clientX - rect.left;
+            const y = e.clientY - rect.top;
+            
+            button.style.background = `
+                radial-gradient(circle at ${x}px ${y}px, 
+                #87CEEB,
+                #4169E1)
+            `;
+        });
+        
+        button.addEventListener('mouseleave', () => {
+            button.style.background = 'linear-gradient(45deg, #4169E1, #87CEEB)';
+        });
+    </script>
+</body>
+</html>
