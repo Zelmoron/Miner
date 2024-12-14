@@ -2,16 +2,19 @@ package app
 
 import (
 	"WebSocket/internal/endpoints"
+	"WebSocket/internal/repository"
 	"WebSocket/internal/services"
+	"os"
 
 	"github.com/gofiber/fiber/v2"
 	"github.com/gofiber/fiber/v2/middleware/cors"
 )
 
 type App struct {
-	app       *fiber.App
-	endpoints *endpoints.Endpoints
-	services  *services.Services
+	app        *fiber.App
+	endpoints  *endpoints.Endpoints
+	services   *services.Services
+	repository *repository.Repository
 }
 
 func New() *App {
@@ -19,7 +22,10 @@ func New() *App {
 
 	a.app = fiber.New()
 	a.app.Use(cors.New())
-	a.services = services.New()
+	db := repository.CreateTable()
+
+	a.repository = repository.New(db)
+	a.services = services.New(a.repository)
 	a.endpoints = endpoints.New(a.services)
 
 	a.routers()
@@ -31,6 +37,6 @@ func (a *App) routers() {
 }
 func (a *App) Run() {
 
-	a.app.Listen(":8080")
+	a.app.Listen(os.Getenv("port"))
 
 }
