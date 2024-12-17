@@ -5,8 +5,9 @@ import (
 	"fmt"
 	"os"
 
-	"github.com/golang-migrate/migrate"
-	"github.com/golang-migrate/migrate/database/postgres"
+	"github.com/golang-migrate/migrate/v4"
+	"github.com/golang-migrate/migrate/v4/database/postgres"
+	_ "github.com/golang-migrate/migrate/v4/source/file"
 	_ "github.com/lib/pq"
 	"github.com/sirupsen/logrus"
 )
@@ -22,11 +23,11 @@ func New(DB *sql.DB) *Repository {
 }
 
 func CreateTable() *sql.DB {
-	user := os.Getenv("name")           //пользователь Postgres
-	password := os.Getenv("dbpassword") //Пароль Postgres
-	dbname := os.Getenv("dbname")       //Название базы данных
-	host := os.Getenv("dbhost")         //Хост базы данных
-	port := os.Getenv("dbport")         //Прт базы данных
+	user := os.Getenv("name")           //user Postgres
+	password := os.Getenv("dbpassword") //password Postgres
+	dbname := os.Getenv("dbname")       //name of the database
+	host := os.Getenv("dbhost")         //host
+	port := os.Getenv("dbport")         //database`s port
 
 	db, err := sql.Open("postgres", fmt.Sprintf("postgres://%s:%s@%s:%s/%s?sslmode=disable", user, password, host, port, dbname))
 	if err != nil {
@@ -50,6 +51,9 @@ func CreateTable() *sql.DB {
 	if err := m.Up(); err != nil && err != migrate.ErrNoChange {
 		logrus.Fatalf("Failed to apply migrations: %v", err)
 	}
+	logrus.Info("Succes migrations")
+
+	//todo add down
 
 	return db
 
