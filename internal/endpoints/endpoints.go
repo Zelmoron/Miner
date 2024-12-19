@@ -4,11 +4,14 @@ import (
 	"WebSocket/internal/requests"
 	"net/http"
 
+	"github.com/go-playground/validator/v10"
 	"github.com/gofiber/fiber/v2"
 )
 
+var validate = validator.New()
+
 type Services interface {
-	Registration(*requests.UserRegRequest)
+	Registration(requests.UserRegRequest)
 }
 type Endpoints struct {
 	services Services
@@ -22,14 +25,18 @@ func New(services Services) *Endpoints {
 
 func (e *Endpoints) Registration(c *fiber.Ctx) error {
 
-	var u *requests.UserRegRequest
+	var u requests.UserRegRequest
 	if err := c.BodyParser(&u); err != nil {
 		return c.Status(http.StatusBadRequest).JSON(fiber.Map{
-			"status": "BadRequest",
+			"error": "BadRequest - Bad Data",
 		})
 	}
 
-	//TODO сделать валидацию
+	if err := validate.Struct(u); err != nil {
+		return c.Status(http.StatusBadRequest).JSON(fiber.Map{
+			"status": "BadRequest - Validation error",
+		})
+	}
 
 	e.services.Registration(u)
 

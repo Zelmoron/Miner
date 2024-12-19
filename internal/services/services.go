@@ -15,6 +15,7 @@ func New(database *repository.Repository) *Services {
 	}
 }
 
-func (s *Services) Registration(user *requests.UserRegRequest) {
+func (s *Services) Registration(user requests.UserRegRequest) {
 
+	s.database.CreateUser(user)
 }

@@ -1,6 +1,7 @@
 package repository
 
 import (
+	"WebSocket/internal/requests"
 	"database/sql"
 	"fmt"
 	"os"
@@ -54,11 +55,25 @@ func CreateTable() *sql.DB {
 	logrus.Info("Succes migrations")
 
 	//todo add down
+	//
 
 	return db
 
 }
 
-func (r *Repository) CreateUser() {
+func (r *Repository) CreateUser(user requests.UserRegRequest) {
 
+	query := "SELECT * FROM users WHERE email=$1"
+	row := r.DB.QueryRow(query, user.Email)
+
+	if row != nil {
+		fmt.Println("Table has user")
+	}
+	// query = `INSERT INTO users (name, age) VALUES ($1, $2)`
+	// _, err := r.DB.Exec(query, "John Doe", 30)
+	// if err != nil {
+	// 	logrus.Fatal(err)
+	// }
+
+	logrus.Info("Insert succes")
 }

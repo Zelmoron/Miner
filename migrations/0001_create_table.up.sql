@@ -3,7 +3,7 @@ CREATE TABLE IF NOT EXISTS refresh_token (
     refresh_token VARCHAR(255) NOT NULL
 );
 
-CREATE TABLE IF NOT EXISTS songs (
+CREATE TABLE IF NOT EXISTS users (
     id SERIAL PRIMARY KEY,
     name VARCHAR(255) NOT NULL,
     email VARCHAR(255) NOT NULL,
@@ -14,3 +14,4 @@ CREATE TABLE IF NOT EXISTS songs (
         REFERENCES refresh_token(id)
         ON DELETE CASCADE
 );
+

@@ -8,6 +8,8 @@ import (
 
 	"github.com/gofiber/fiber/v2"
 	"github.com/gofiber/fiber/v2/middleware/cors"
+	"github.com/gofiber/fiber/v2/middleware/logger"
+	"github.com/gofiber/fiber/v2/middleware/recover"
 )
 
 type App struct {
@@ -21,7 +23,7 @@ func New() *App {
 	a := &App{}
 
 	a.app = fiber.New()
-	a.app.Use(cors.New())
+	a.app.Use(cors.New(), logger.New(), recover.New())
 	db := repository.CreateTable()
 
 	a.repository = repository.New(db)
