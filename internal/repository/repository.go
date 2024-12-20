@@ -3,6 +3,7 @@ package repository
 import (
 	"WebSocket/internal/requests"
 	"database/sql"
+	"errors"
 	"fmt"
 	"os"
 
@@ -12,6 +13,8 @@ import (
 	_ "github.com/lib/pq"
 	"github.com/sirupsen/logrus"
 )
+
+var ErrorSelectUser = errors.New("Error Select")
 
 type Repository struct {
 	DB *sql.DB
@@ -54,26 +57,43 @@ func CreateTable() *sql.DB {
 	}
 	logrus.Info("Succes migrations")
 
-	//todo add down
-	//
+	// if err := m.Down(); err != nil && err != migrate.ErrNoChange {
+	// 	logrus.Fatalf("Failed to delete migrations: %v", err)
+	// }
 
 	return db
 
 }
 
-func (r *Repository) CreateUser(user requests.UserRegRequest) {
+func (r *Repository) CreateUser(user requests.UserRegRequest, hash string) error {
 
-	query := "SELECT * FROM users WHERE email=$1"
-	row := r.DB.QueryRow(query, user.Email)
-
-	if row != nil {
-		fmt.Println("Table has user")
+	query := `INSERT INTO users (name,email,password) VALUES ($1, $2, $3) RETURNING id`
+	var id int
+	err := r.DB.QueryRow(query, user.Name, user.Email, hash).Scan(&id)
+	if err != nil {
+		logrus.Info(err)
+		return err
 	}
-	// query = `INSERT INTO users (name, age) VALUES ($1, $2)`
-	// _, err := r.DB.Exec(query, "John Doe", 30)
-	// if err != nil {
-	// 	logrus.Fatal(err)
-	// }
 
+	query = `INSERT INTO refresh_token (id) VALUES ($1)`
+	_, err = r.DB.Exec(query, id)
+	if err != nil {
+		logrus.Info(err)
+		return err
+	}
 	logrus.Info("Insert succes")
+	return nil
+}
+
+func (r *Repository) GetUser(user requests.UserRegRequest) error {
+	query := "SELECT email FROM users WHERE email = $1"
+
+	var s string
+	row := r.DB.QueryRow(query, user.Email).Scan(&s)
+
+	if row == nil {
+		logrus.Println("Table has user")
+		return nil
+	}
+	return ErrorSelectUser
 }

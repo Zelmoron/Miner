@@ -33,5 +33,6 @@ require (
 	github.com/valyala/bytebufferpool v1.0.0 // indirect
 	github.com/valyala/fasthttp v1.51.0 // indirect
 	github.com/valyala/tcplisten v1.0.0 // indirect
+	github.com/vzglad-smerti/password_hash v0.0.0-20151126002249-16da77469e78
 	golang.org/x/sys v0.25.0 // indirect
 )

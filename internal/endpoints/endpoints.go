@@ -11,7 +11,7 @@ import (
 var validate = validator.New()
 
 type Services interface {
-	Registration(requests.UserRegRequest)
+	Registration(requests.UserRegRequest) error
 }
 type Endpoints struct {
 	services Services
@@ -38,7 +38,13 @@ func (e *Endpoints) Registration(c *fiber.Ctx) error {
 		})
 	}
 
-	e.services.Registration(u)
+	err := e.services.Registration(u)
+
+	if err != nil {
+		return c.Status(http.StatusBadRequest).JSON(fiber.Map{
+			"message": "Registration failed",
+		})
+	}
 
 	return c.Status(http.StatusOK).JSON(fiber.Map{
 		"status": "OK",
