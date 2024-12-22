@@ -40,6 +40,7 @@ func (s *Services) Registration(user requests.UserRegRequest) error {
 		return err
 	}
 
+	//
 	// hash_veriry, err := password.Verify(hash, u)
 	// if err != nil {
 	// 	log.Print(err)
