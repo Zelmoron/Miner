@@ -85,11 +85,11 @@ func (r *Repository) CreateUser(user requests.UserRegRequest, hash string) error
 	return nil
 }
 
-func (r *Repository) GetUser(user requests.UserRegRequest) error {
+func (r *Repository) GetUser(user string) error {
 	query := "SELECT email FROM users WHERE email = $1"
 
 	var s string
-	row := r.DB.QueryRow(query, user.Email).Scan(&s)
+	row := r.DB.QueryRow(query, user).Scan(&s)
 
 	if row == nil {
 		logrus.Println("Table has user")

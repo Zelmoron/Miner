@@ -21,7 +21,7 @@ func New(database *repository.Repository) *Services {
 
 func (s *Services) Registration(user requests.UserRegRequest) error {
 
-	err := s.database.GetUser(user)
+	err := s.database.GetUser(user.Email)
 	if err == nil {
 		logrus.Info("User exists")
 		return errors.New("Already exists(user)")
@@ -40,13 +40,35 @@ func (s *Services) Registration(user requests.UserRegRequest) error {
 		return err
 	}
 
-	//
+	//git
 	// hash_veriry, err := password.Verify(hash, u)
 	// if err != nil {
 	// 	log.Print(err)
 	// }
 
 	return nil
+}
+
+func (s *Services) Login(user requests.UserLoginRequest) error {
+	err := s.database.GetUser(user.Email)
+	if err != nil {
+		logrus.Info("User not found")
+		return errors.New("Not found")
+	}
+
+	//hash password
+	// hash, err := password.Hash(user.Password)
+	// if err != nil {
+	// 	logrus.Println(err)
+	// }
+
+	// hash_veriry, err := password.Verify(hash, u)
+	// if err != nil {
+	// 	log.Print(err)
+	// }
+
+	return nil
+
 }
 
 func JWT() {

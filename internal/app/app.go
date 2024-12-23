@@ -36,6 +36,7 @@ func New() *App {
 
 func (a *App) routers() {
 	a.app.Post("/registration", a.endpoints.Registration)
+	a.app.Post("/login", a.endpoints.Login)
 }
 func (a *App) Run() {
 
