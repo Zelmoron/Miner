@@ -50,23 +50,25 @@ func (s *Services) Registration(user requests.UserRegRequest) error {
 }
 
 func (s *Services) Login(user requests.UserLoginRequest) error {
-	err := s.database.GetUser(user.Email)
+
+	pass, err := s.database.GetUserLogin(user.Email)
 	if err != nil {
 		logrus.Info("User not found")
 		return errors.New("Not found")
 	}
 
-	//hash password
-	// hash, err := password.Hash(user.Password)
-	// if err != nil {
-	// 	logrus.Println(err)
-	// }
+	logrus.Info("Email found")
 
-	// hash_veriry, err := password.Verify(hash, u)
-	// if err != nil {
-	// 	log.Print(err)
-	// }
+	hash_password, err := password.Verify(pass, user.Password)
+	if err != nil {
+		logrus.Error(err)
+		return err
+	}
 
+	if !hash_password {
+		logrus.Info(hash_password)
+		return errors.New("Password false")
+	}
 	return nil
 
 }

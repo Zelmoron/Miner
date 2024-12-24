@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <style>
-        /* Предыдущие стили остаются без изменений */
+        /* Существующие стили */
         body {
             margin: 0;
             height: 100vh;
@@ -26,6 +26,17 @@
             overflow: hidden;
         }
 
+        /* Добавляем стили для сообщений об ошибках */
+        .error-message {
+            color: #dc3545;
+            font-size: 14px;
+            margin-top: 5px;
+            margin-bottom: 10px;
+            text-align: center;
+            display: none;
+        }
+
+        /* Остальные существующие стили остаются без изменений */
         .forms-container {
             position: relative;
             width: 100%;
@@ -100,28 +111,6 @@
             transform: translateY(-1px);
         }
 
-        button::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: -100%;
-            width: 100%;
-            height: 100%;
-            background: linear-gradient(
-                90deg,
-                rgba(255, 255, 255, 0) 0%,
-                rgba(255, 255, 255, 0.3) 50%,
-                rgba(255, 255, 255, 0) 100%
-            );
-            animation: shine 3s infinite;
-        }
-
-        @keyframes shine {
-            to {
-                left: 100%;
-            }
-        }
-
         .switch-form {
             text-align: center;
             margin-top: 20px;
@@ -131,10 +120,6 @@
             color: #4169E1;
             text-decoration: none;
             cursor: pointer;
-        }
-
-        .switch-form a:hover {
-            text-decoration: underline;
         }
     </style>
 </head>
@@ -150,6 +135,7 @@
                     <div class="input-group">
                         <input type="password" name="password" placeholder="Пароль" required>
                     </div>
+                    <div class="error-message" id="loginError"></div>
                     <button type="submit">Войти</button>
                 </form>
                 <div class="switch-form">
@@ -172,6 +158,7 @@
                     <div class="input-group">
                         <input type="password" name="confirmPassword" placeholder="Подтвердите пароль" required>
                     </div>
+                    <div class="error-message" id="registerError"></div>
                     <button type="submit">Зарегистрироваться</button>
                 </form>
                 <div class="switch-form">
@@ -184,6 +171,15 @@
     <script>
         function toggleForm() {
             document.querySelector('.container').classList.toggle('show-register');
+            // Скрываем сообщения об ошибках при переключении форм
+            document.getElementById('loginError').style.display = 'none';
+            document.getElementById('registerError').style.display = 'none';
+        }
+
+        function showError(elementId, message) {
+            const errorElement = document.getElementById(elementId);
+            errorElement.textContent = message;
+            errorElement.style.display = 'block';
         }
 
         // Обработка формы входа
@@ -210,10 +206,11 @@
                     console.log('Успешный вход:', result);
                     // Здесь можно добавить редирект или другую логику после успешного входа
                 } else {
-                    console.error('Ошибка входа:', await response.text());
+                    showError('loginError', 'Неправильный email или пароль');
                 }
             } catch (error) {
                 console.error('Ошибка при отправке запроса:', error);
+                showError('loginError', 'Ошибка при попытке входа');
             }
         });
 
@@ -229,9 +226,8 @@
                 confirmPassword: formData.get('confirmPassword')
             };
 
-            // Проверка совпадения паролей
             if (data.password !== data.confirmPassword) {
-                alert('Пароли не совпадают');
+                showError('registerError', 'Пароли не совпадают');
                 return;
             }
 
@@ -249,31 +245,13 @@
                     console.log('Успешная регистрация:', result);
                     // Здесь можно добавить редирект или другую логику после успешной регистрации
                 } else {
-                    console.error('Ошибка регистрации:', await response.text());
+                    const errorData = await response.json();
+                    showError('registerError', 'Пользователь с таким email уже существует');
                 }
             } catch (error) {
                 console.error('Ошибка при отправке запроса:', error);
+                showError('registerError', 'Ошибка при регистрации');
             }
-        });
-
-        // Эффект перелива для кнопок
-        const buttons = document.querySelectorAll('button');
-        buttons.forEach(button => {
-            button.addEventListener('mousemove', (e) => {
-                const rect = button.getBoundingClientRect();
-                const x = e.clientX - rect.left;
-                const y = e.clientY - rect.top;
-                
-                button.style.background = `
-                    radial-gradient(circle at ${x}px ${y}px, 
-                    #87CEEB,
-                    #4169E1)
-                `;
-            });
-            
-            button.addEventListener('mouseleave', () => {
-                button.style.background = 'linear-gradient(45deg, #4169E1, #87CEEB)';
-            });
         });
     </script>
 </body>

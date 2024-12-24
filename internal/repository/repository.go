@@ -97,3 +97,19 @@ func (r *Repository) GetUser(user string) error {
 	}
 	return ErrorSelectUser
 }
+
+func (r *Repository) GetUserLogin(user string) (string, error) {
+
+	query := "SELECT password FROM users WHERE email = $1"
+
+	var pass string
+
+	row := r.DB.QueryRow(query, user).Scan(&pass)
+
+	if row != nil {
+		logrus.Info("User not found")
+		return "", row
+	}
+
+	return pass, nil
+}
