@@ -3,6 +3,7 @@ package endpoints
 import (
 	"WebSocket/internal/requests"
 	"net/http"
+	"time"
 
 	"github.com/go-playground/validator/v10"
 	"github.com/gofiber/fiber/v2"
@@ -12,7 +13,7 @@ var validate = validator.New()
 
 type Services interface {
 	Registration(requests.UserRegRequest) error
-	Login(requests.UserLoginRequest) error
+	Login(requests.UserLoginRequest) (string, string, error)
 }
 type Endpoints struct {
 	services Services
@@ -67,13 +68,31 @@ func (e *Endpoints) Login(c *fiber.Ctx) error {
 		})
 	}
 
-	err := e.services.Login(u)
+	accessToken, refreshToken, err := e.services.Login(u)
 
 	if err != nil {
 		return c.Status(http.StatusBadRequest).JSON(fiber.Map{
 			"message": "Login failed",
 		})
 	}
+
+	// Установка токенов в HTTP-only куки
+	c.Cookie(&fiber.Cookie{
+		Name:     "access_token",
+		Value:    accessToken,
+		Expires:  time.Now().Add(time.Hour),
+		HTTPOnly: true,  // Запрет на доступ через JS
+		Secure:   false, // Используйте только по HTTPS
+	})
+
+	c.Cookie(&fiber.Cookie{
+		Name:     "refresh_token",
+		Value:    refreshToken,
+		Expires:  time.Now().Add(time.Hour * 24 * 7),
+		HTTPOnly: true,
+		Secure:   false,
+	})
+
 	return c.Status(http.StatusOK).JSON(fiber.Map{
 		"status": "OK",
 	})
