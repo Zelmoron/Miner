@@ -183,76 +183,78 @@
         }
 
         // Обработка формы входа
-        document.getElementById('loginForm').addEventListener('submit', async function(e) {
-            e.preventDefault();
-            
-            const formData = new FormData(this);
-            const data = {
-                email: formData.get('email'),
-                password: formData.get('password')
-            };
+document.getElementById('loginForm').addEventListener('submit', async function(e) {
+    e.preventDefault();
+    
+    const formData = new FormData(this);
+    const data = {
+        email: formData.get('email'),
+        password: formData.get('password')
+    };
 
-            try {
-                const response = await fetch('http://localhost:8080/login', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json'
-                    },
-                    body: JSON.stringify(data)
-                });
-
-                if (response.ok) {
-                    const result = await response.json();
-                    console.log('Успешный вход:', result);
-                    // Здесь можно добавить редирект или другую логику после успешного входа
-                } else {
-                    showError('loginError', 'Неправильный email или пароль');
-                }
-            } catch (error) {
-                console.error('Ошибка при отправке запроса:', error);
-                showError('loginError', 'Ошибка при попытке входа');
-            }
+    try {
+        const response = await fetch('http://localhost:8080/login', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(data)
         });
 
-        // Обработка формы регистрации
-        document.getElementById('registerForm').addEventListener('submit', async function(e) {
-            e.preventDefault();
-            
-            const formData = new FormData(this);
-            const data = {
-                name: formData.get('name'),
-                email: formData.get('email'),
-                password: formData.get('password'),
-                confirmPassword: formData.get('confirmPassword')
-            };
+        if (response.ok) {
+            const result = await response.json();
+            console.log('Успешный вход:', result);
+            // Перенаправление на game.html
+            window.location.href = 'game.html';
+        } else {
+            showError('loginError', 'Неправильный email или пароль');
+        }
+    } catch (error) {
+        console.error('Ошибка при отправке запроса:', error);
+        showError('loginError', 'Ошибка при попытке входа');
+    }
+});
 
-            if (data.password !== data.confirmPassword) {
-                showError('registerError', 'Пароли не совпадают');
-                return;
-            }
+// Обработка формы регистрации
+document.getElementById('registerForm').addEventListener('submit', async function(e) {
+    e.preventDefault();
+    
+    const formData = new FormData(this);
+    const data = {
+        name: formData.get('name'),
+        email: formData.get('email'),
+        password: formData.get('password'),
+        confirmPassword: formData.get('confirmPassword')
+    };
 
-            try {
-                const response = await fetch('http://localhost:8080/registration', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json'
-                    },
-                    body: JSON.stringify(data)
-                });
+    if (data.password !== data.confirmPassword) {
+        showError('registerError', 'Пароли не совпадают');
+        return;
+    }
 
-                if (response.ok) {
-                    const result = await response.json();
-                    console.log('Успешная регистрация:', result);
-                    // Здесь можно добавить редирект или другую логику после успешной регистрации
-                } else {
-                    const errorData = await response.json();
-                    showError('registerError', 'Пользователь с таким email уже существует');
-                }
-            } catch (error) {
-                console.error('Ошибка при отправке запроса:', error);
-                showError('registerError', 'Ошибка при регистрации');
-            }
+    try {
+        const response = await fetch('http://localhost:8080/registration', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(data)
         });
+
+        if (response.ok) {
+            const result = await response.json();
+            console.log('Успешная регистрация:', result);
+            // Перенаправление на game.html
+            window.location.href = 'game.html';
+        } else {
+            const errorData = await response.json();
+            showError('registerError', 'Пользователь с таким email уже существует');
+        }
+    } catch (error) {
+        console.error('Ошибка при отправке запроса:', error);
+        showError('registerError', 'Ошибка при регистрации');
+    }
+});
     </script>
 </body>
 </html>

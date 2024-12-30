@@ -13,7 +13,7 @@ var validate = validator.New()
 
 type Services interface {
 	Registration(requests.UserRegRequest) error
-	Login(requests.UserLoginRequest) (string, string, error)
+	Login(requests.UserLoginRequest) (string, string, string, error)
 }
 type Endpoints struct {
 	services Services
@@ -68,7 +68,7 @@ func (e *Endpoints) Login(c *fiber.Ctx) error {
 		})
 	}
 
-	accessToken, refreshToken, err := e.services.Login(u)
+	accessToken, refreshToken, name, err := e.services.Login(u)
 
 	if err != nil {
 		return c.Status(http.StatusBadRequest).JSON(fiber.Map{
@@ -95,6 +95,7 @@ func (e *Endpoints) Login(c *fiber.Ctx) error {
 
 	return c.Status(http.StatusOK).JSON(fiber.Map{
 		"status": "OK",
+		"name":   name,
 	})
 
 }

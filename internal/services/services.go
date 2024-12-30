@@ -54,38 +54,38 @@ func (s *Services) Registration(user requests.UserRegRequest) error {
 	return nil
 }
 
-func (s *Services) Login(user requests.UserLoginRequest) (string, string, error) {
+func (s *Services) Login(user requests.UserLoginRequest) (string, string, string, error) {
 
-	pass, err := s.database.GetUserLogin(user.Email)
+	pass, name, err := s.database.GetUserLogin(user.Email)
 	if err != nil {
 		logrus.Info("User not found")
-		return "", "", errors.New("Not found")
+		return "", "", "", errors.New("Not found")
 	}
 
-	logrus.Info("Email found")
+	logrus.Info("Email found", name)
 
 	hash_password, err := password.Verify(pass, user.Password)
 	if err != nil {
 		logrus.Error(err)
-		return "", "", err
+		return "", "", "", err
 	}
 
 	if !hash_password {
 		logrus.Info(hash_password)
-		return "", "", errors.New("Password false")
+		return "", "", "", errors.New("Password false")
 	}
 
 	accessToken, err := generateJWT(user.Email)
 	if err != nil {
-		return "", "", err
+		return "", "", "", err
 	}
 
 	refreshToken, err := generateRefreshToken(user.Email)
 	if err != nil {
-		return "", "", err
+		return "", "", "", err
 	}
 
-	return accessToken, refreshToken, nil
+	return accessToken, refreshToken, name, nil
 
 }
 
