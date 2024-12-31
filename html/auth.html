@@ -198,6 +198,7 @@ document.getElementById('loginForm').addEventListener('submit', async function(e
             headers: {
                 'Content-Type': 'application/json'
             },
+            credentials: 'include', // Добавьте этот параметр для включения куки
             body: JSON.stringify(data)
         });
 
@@ -238,6 +239,7 @@ document.getElementById('registerForm').addEventListener('submit', async functio
             headers: {
                 'Content-Type': 'application/json'
             },
+            credentials: 'include', // Добавьте этот параметр для включения куки
             body: JSON.stringify(data)
         });
 
@@ -255,6 +257,7 @@ document.getElementById('registerForm').addEventListener('submit', async functio
         showError('registerError', 'Ошибка при регистрации');
     }
 });
+
     </script>
 </body>
 </html>

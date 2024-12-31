@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html>
+<html lang="ru">
 <head>
     <meta charset="UTF-8">
     <style>
@@ -105,6 +105,27 @@
     </div>
 
     <script>
+        // Проверка токена при загрузке страницы
+        async function checkToken() {
+            try {
+                const response = await fetch('http://localhost:8080/checktoken', {
+                    method: 'GET',
+                    credentials: 'include', // Добавлено для отправки куки
+                });
+
+                if (!response.ok) {
+                    throw new Error('Token is invalid or missing');
+                }
+
+                const data = await response.json();
+                console.log('Token is valid:', data);
+                // Здесь вы можете обновить пользовательский интерфейс или выполнить другие действия
+            } catch (error) {
+                console.error('Error checking token:', error);
+                // Здесь можно перенаправить пользователя на страницу входа или показать сообщение об ошибке
+            }
+        }
+
         // Добавляем эффект перелива для кнопки
         const button = document.querySelector('.start-button');
         
@@ -123,6 +144,9 @@
         button.addEventListener('mouseleave', () => {
             button.style.background = 'linear-gradient(45deg, #4169E1, #87CEEB)';
         });
+
+        // Вызываем функцию проверки токена при загрузке страницы
+        window.onload = checkToken;
     </script>
 </body>
 </html>

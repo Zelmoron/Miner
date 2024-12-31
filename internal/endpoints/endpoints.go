@@ -13,7 +13,7 @@ var validate = validator.New()
 
 type Services interface {
 	Registration(requests.UserRegRequest) error
-	Login(requests.UserLoginRequest) (string, string, string, error)
+	Login(requests.UserLoginRequest) (string, string, error)
 }
 type Endpoints struct {
 	services Services
@@ -68,7 +68,7 @@ func (e *Endpoints) Login(c *fiber.Ctx) error {
 		})
 	}
 
-	accessToken, refreshToken, name, err := e.services.Login(u)
+	_, _, err := e.services.Login(u)
 
 	if err != nil {
 		return c.Status(http.StatusBadRequest).JSON(fiber.Map{
@@ -77,25 +77,30 @@ func (e *Endpoints) Login(c *fiber.Ctx) error {
 	}
 
 	// Установка токенов в HTTP-only куки
-	c.Cookie(&fiber.Cookie{
-		Name:     "access_token",
-		Value:    accessToken,
-		Expires:  time.Now().Add(time.Hour),
-		HTTPOnly: true,  // Запрет на доступ через JS
-		Secure:   false, // Используйте только по HTTPS
-	})
+	cookie := new(fiber.Cookie)
+	cookie.Name = "john"
+	cookie.Value = "f"
+	cookie.Expires = time.Now().Add(24 * time.Hour)
+	cookie.HTTPOnly = true // Устанавливаем HTTPOnly атрибут
+	cookie.SameSite = "None"
+	cookie.Secure = true
+	// Set cookie
+	c.Cookie(cookie)
 
-	c.Cookie(&fiber.Cookie{
-		Name:     "refresh_token",
-		Value:    refreshToken,
-		Expires:  time.Now().Add(time.Hour * 24 * 7),
-		HTTPOnly: true,
-		Secure:   false,
-	})
+	// c.Cookie(&fiber.Cookie{
+	// 	Name:    "refresh_token",
+	// 	Value:   refreshToken,
+	// 	Expires: time.Now().Add(time.Hour * 24 * 7),
+	// 	// HTTPOnly: true,
+	// 	// Secure:   false,
+	// })
 
 	return c.Status(http.StatusOK).JSON(fiber.Map{
 		"status": "OK",
-		"name":   name,
 	})
 
+}
+
+func (e *Endpoints) Check(c *fiber.Ctx) error {
+	return c.Status(200).JSON("")
 }
