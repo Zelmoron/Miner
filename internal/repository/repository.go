@@ -98,18 +98,18 @@ func (r *Repository) GetUser(user string) error {
 	return ErrorSelectUser
 }
 
-func (r *Repository) GetUserLogin(user string) (string, error) {
+func (r *Repository) GetUserLogin(user string) (string, int, error) {
 
-	query := "SELECT password FROM users WHERE email = $1"
-
+	query := "SELECT id,password FROM users WHERE email = $1"
+	var id int
 	var pass string
 
-	row := r.DB.QueryRow(query, user).Scan(&pass)
+	row := r.DB.QueryRow(query, user).Scan(&id, &pass)
 
 	if row != nil {
 		logrus.Info("User not found")
-		return "", row
+		return "", 0, row
 	}
 
-	return pass, nil
+	return pass, id, nil
 }

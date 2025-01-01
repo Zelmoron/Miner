@@ -68,7 +68,7 @@ func (e *Endpoints) Login(c *fiber.Ctx) error {
 		})
 	}
 
-	_, _, err := e.services.Login(u)
+	access_token, refresh_token, err := e.services.Login(u)
 
 	if err != nil {
 		return c.Status(http.StatusBadRequest).JSON(fiber.Map{
@@ -77,23 +77,23 @@ func (e *Endpoints) Login(c *fiber.Ctx) error {
 	}
 
 	// Установка токенов в HTTP-only куки - так потому что на разныж хостах
-	cookie := new(fiber.Cookie)
-	cookie.Name = "john"
-	cookie.Value = "f"
-	cookie.Expires = time.Now().Add(24 * time.Hour)
-	cookie.HTTPOnly = true // Устанавливаем HTTPOnly атрибут
-	cookie.SameSite = "None"
-	cookie.Secure = true
-	// Set cookie
-	c.Cookie(cookie)
+	c.Cookie(&fiber.Cookie{
+		Name:     "access_token",
+		Value:    access_token,
+		Expires:  time.Now().Add(time.Hour * 100 * 100),
+		HTTPOnly: true,
+		Secure:   false,
+		SameSite: "None",
+	})
 
-	// c.Cookie(&fiber.Cookie{
-	// 	Name:    "refresh_token",
-	// 	Value:   refreshToken,
-	// 	Expires: time.Now().Add(time.Hour * 24 * 7),
-	// 	// HTTPOnly: true,
-	// 	// Secure:   false,
-	// })
+	c.Cookie(&fiber.Cookie{
+		Name:     "refresh_token",
+		Value:    refresh_token,
+		Expires:  time.Now().Add(time.Hour * 100 * 100),
+		HTTPOnly: true,
+		Secure:   false,
+		SameSite: "None",
+	})
 
 	return c.Status(http.StatusOK).JSON(fiber.Map{
 		"status": "OK",

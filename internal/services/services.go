@@ -4,6 +4,8 @@ import (
 	"WebSocket/internal/repository"
 	"WebSocket/internal/requests"
 	"errors"
+	"fmt"
+	"strconv"
 	"time"
 
 	"github.com/dgrijalva/jwt-go"
@@ -55,8 +57,7 @@ func (s *Services) Registration(user requests.UserRegRequest) error {
 }
 
 func (s *Services) Login(user requests.UserLoginRequest) (string, string, error) {
-
-	pass, err := s.database.GetUserLogin(user.Email)
+	pass, id, err := s.database.GetUserLogin(user.Email)
 	if err != nil {
 		logrus.Info("User not found")
 		return "", "", errors.New("Not found")
@@ -75,12 +76,12 @@ func (s *Services) Login(user requests.UserLoginRequest) (string, string, error)
 		return "", "", errors.New("Password false")
 	}
 
-	accessToken, err := generateJWT(user.Email)
+	accessToken, err := generateJWT(id)
 	if err != nil {
 		return "", "", err
 	}
 
-	refreshToken, err := generateRefreshToken(user.Email)
+	refreshToken, err := generateRefreshToken(id)
 	if err != nil {
 		return "", "", err
 	}
@@ -89,19 +90,20 @@ func (s *Services) Login(user requests.UserLoginRequest) (string, string, error)
 
 }
 
-func generateJWT(userID string) (string, error) {
+func generateJWT(userID int) (string, error) {
+	fmt.Println(userID)
 	claims := jwt.MapClaims{
-		"sub": userID,
-		"exp": time.Now().Add(time.Hour * 1).Unix(),
+		"sub": strconv.Itoa(userID),
+		"exp": time.Now().Add(time.Second * 10).Unix(),
 	}
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
 	return token.SignedString(jwtSecret)
 }
 
 // Функция для генерации refresh токена
-func generateRefreshToken(userID string) (string, error) {
+func generateRefreshToken(userID int) (string, error) {
 	claims := jwt.MapClaims{
-		"sub": userID,
+		"sub": strconv.Itoa(userID),
 		"exp": time.Now().Add(time.Hour * 24 * 7).Unix(), // Срок действия 7 дней
 	}
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
