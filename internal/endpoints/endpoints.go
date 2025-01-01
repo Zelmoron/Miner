@@ -76,7 +76,7 @@ func (e *Endpoints) Login(c *fiber.Ctx) error {
 		})
 	}
 
-	// Установка токенов в HTTP-only куки
+	// Установка токенов в HTTP-only куки - так потому что на разныж хостах
 	cookie := new(fiber.Cookie)
 	cookie.Name = "john"
 	cookie.Value = "f"
