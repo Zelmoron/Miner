@@ -115,17 +115,19 @@
 
                 if (!response.ok) {
                     throw new Error('Token is invalid or missing');
+                    
                 }
 
                 const data = await response.json();
                 console.log('Token is valid:', data);
+                
                 
                 // Обновляем имя пользователя в интерфейсе
                 document.getElementById('username').textContent = data.name || "Пользователь"; // Устанавливаем имя пользователя
 
             } catch (error) {
                 console.error('Error checking token:', error);
-                // Здесь можно перенаправить пользователя на страницу входа или показать сообщение об ошибке
+                window.location.href = 'auth.html';
             }
         }
 

@@ -51,7 +51,7 @@ func CreateTable() *sql.DB {
 		logrus.Fatalf("Failed to create migrate instance: %v", err)
 	}
 
-	//Поднять миграции
+	// Поднять миграции
 	if err := m.Up(); err != nil && err != migrate.ErrNoChange {
 		logrus.Fatalf("Failed to apply migrations: %v", err)
 	}
@@ -81,6 +81,14 @@ func (r *Repository) CreateUser(user requests.UserRegRequest, hash string) error
 		logrus.Info(err)
 		return err
 	}
+
+	query = `UPDATE users SET refresh_token_id = $1 WHERE id = $2`
+	_, err = r.DB.Exec(query, id, id)
+	if err != nil {
+		logrus.Info(err)
+		return err
+	}
+
 	logrus.Info("Insert succes")
 	return nil
 }
@@ -115,11 +123,12 @@ func (r *Repository) GetUserLogin(user string) (string, int, error) {
 }
 
 func (r *Repository) AddToken(refresh string, id int) error {
-	query := "UPDATE refresh SET refresh_token=$1 WHERE id=$2"
+	query := "UPDATE refresh_token SET refresh_token=$1 WHERE id=$2"
 
 	_, err := r.DB.Exec(query, refresh, id)
 
 	if err != nil {
+		logrus.Warn("Error with insert token", err)
 		return err
 	}
 

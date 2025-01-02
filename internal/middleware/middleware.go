@@ -37,7 +37,7 @@ func (m *Middleware) JWT(c *fiber.Ctx) error {
 	})
 
 	if err != nil || !token.Valid {
-		logrus.Warn("Invalid token")
+		logrus.Warn("Invalid token - time or error with parse")
 		return c.Status(http.StatusUnauthorized).JSON(fiber.Map{
 			"error": "Invalid token",
 		})

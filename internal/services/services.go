@@ -86,6 +86,10 @@ func (s *Services) Login(user requests.UserLoginRequest) (string, string, error)
 		return "", "", err
 	}
 
+	err = s.database.AddToken(refreshToken, id)
+	if err != nil {
+		return "", "", err
+	}
 	return accessToken, refreshToken, nil
 
 }
