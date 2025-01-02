@@ -98,7 +98,7 @@ func generateJWT(userID int) (string, error) {
 	fmt.Println(userID)
 	claims := jwt.MapClaims{
 		"sub": strconv.Itoa(userID),
-		"exp": time.Now().Add(time.Second * 10).Unix(),
+		"exp": time.Now().Add(time.Second * 5).Unix(),
 	}
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
 	return token.SignedString(jwtSecret)
@@ -108,7 +108,7 @@ func generateJWT(userID int) (string, error) {
 func generateRefreshToken(userID int) (string, error) {
 	claims := jwt.MapClaims{
 		"sub": strconv.Itoa(userID),
-		"exp": time.Now().Add(time.Hour * 24 * 7).Unix(), // Срок действия 7 дней
+		"exp": time.Now().Add(time.Hour * 24 * 7).Unix(),
 	}
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
 	return token.SignedString(refreshSecret)

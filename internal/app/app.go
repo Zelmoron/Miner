@@ -51,9 +51,14 @@ func (a *App) routers() {
 	public.Post("/registration", a.endpoints.Registration)
 	public.Post("/login", a.endpoints.Login)
 
-	private := a.app.Group("/")
-	private.Use(a.middleware.JWT)
-	private.Get("/checktoken", a.endpoints.Check)
+	jwt := a.app.Group("/jwt")
+	jwt.Use(a.middleware.JWT)
+	jwt.Get("/checktoken", a.endpoints.Check)
+
+	refresh := a.app.Group("/refresh")
+	refresh.Use(a.middleware.REFRESH)
+	refresh.Get("/refresh", a.endpoints.Refresh)
+
 }
 func (a *App) Run() {
 

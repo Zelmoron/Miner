@@ -2,6 +2,7 @@ package endpoints
 
 import (
 	"WebSocket/internal/requests"
+	"fmt"
 	"net/http"
 	"time"
 
@@ -104,5 +105,12 @@ func (e *Endpoints) Login(c *fiber.Ctx) error {
 func (e *Endpoints) Check(c *fiber.Ctx) error {
 	return c.Status(http.StatusOK).JSON(fiber.Map{
 		"name": c.Locals("sub"),
+	})
+}
+
+func (e *Endpoints) Refresh(c *fiber.Ctx) error {
+	fmt.Println("12313")
+	return c.Status(http.StatusOK).JSON(fiber.Map{
+		"refresh": c.Locals("sub"),
 	})
 }
