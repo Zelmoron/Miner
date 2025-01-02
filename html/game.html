@@ -96,8 +96,8 @@
 <body>
     <div class="header">
         <div class="user-info">
-            <div class="user-avatar">П</div>
-            <span>Пользователь</span>
+            <div class="user-avatar"></div>
+            <span id="username"></span> <!-- Добавлен id для элемента -->
         </div>
     </div>
     <div class="main-content">
@@ -119,7 +119,10 @@
 
                 const data = await response.json();
                 console.log('Token is valid:', data);
-                // Здесь вы можете обновить пользовательский интерфейс или выполнить другие действия
+                
+                // Обновляем имя пользователя в интерфейсе
+                document.getElementById('username').textContent = data.name || "Пользователь"; // Устанавливаем имя пользователя
+
             } catch (error) {
                 console.error('Error checking token:', error);
                 // Здесь можно перенаправить пользователя на страницу входа или показать сообщение об ошибке

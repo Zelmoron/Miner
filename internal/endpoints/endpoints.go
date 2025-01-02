@@ -102,5 +102,7 @@ func (e *Endpoints) Login(c *fiber.Ctx) error {
 }
 
 func (e *Endpoints) Check(c *fiber.Ctx) error {
-	return c.Status(200).JSON("")
+	return c.Status(http.StatusOK).JSON(fiber.Map{
+		"name": c.Locals("sub"),
+	})
 }

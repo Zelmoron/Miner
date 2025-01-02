@@ -113,3 +113,15 @@ func (r *Repository) GetUserLogin(user string) (string, int, error) {
 
 	return pass, id, nil
 }
+
+func (r *Repository) AddToken(refresh string, id int) error {
+	query := "UPDATE refresh SET refresh_token=$1 WHERE id=$2"
+
+	_, err := r.DB.Exec(query, refresh, id)
+
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
