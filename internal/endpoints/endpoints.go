@@ -2,8 +2,8 @@ package endpoints
 
 import (
 	"WebSocket/internal/requests"
-	"fmt"
 	"net/http"
+	"sync"
 	"time"
 
 	"github.com/go-playground/validator/v10"
@@ -15,6 +15,7 @@ var validate = validator.New()
 type Services interface {
 	Registration(requests.UserRegRequest) error
 	Login(requests.UserLoginRequest) (string, string, error)
+	NewJWT(interface{}) (string, error)
 }
 type Endpoints struct {
 	services Services
@@ -123,7 +124,29 @@ func (e *Endpoints) Check(c *fiber.Ctx) error {
 }
 
 func (e *Endpoints) Refresh(c *fiber.Ctx) error {
-	fmt.Println("12313")
+	id := c.Locals("sub")
+	access, err := e.services.NewJWT(id)
+	if err != nil {
+		return c.Status(http.StatusBadRequest).JSON(fiber.Map{
+			"refresh": "Bad",
+		})
+	}
+	wg := sync.WaitGroup{}
+	wg.Add(1)
+	go func(c *fiber.Ctx, access string, wg *sync.WaitGroup) {
+		defer wg.Done()
+		c.Cookie(&fiber.Cookie{
+			Name:     "access_token",
+			Value:    access,
+			Expires:  time.Now().Add(time.Hour * 100 * 100),
+			HTTPOnly: true,
+			Secure:   false,
+			SameSite: "None",
+		})
+	}(c, access, &wg)
+
+	wg.Wait()
+
 	return c.Status(http.StatusOK).JSON(fiber.Map{
 		"refresh": c.Locals("sub"),
 	})

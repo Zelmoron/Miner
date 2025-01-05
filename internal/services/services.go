@@ -94,6 +94,20 @@ func (s *Services) Login(user requests.UserLoginRequest) (string, string, error)
 
 }
 
+func (s *Services) NewJWT(id interface{}) (string, error) {
+	idS := id.(string)
+	ID, err := strconv.Atoi(idS)
+	if err != nil {
+		return "", err
+	}
+	accessToken, err := generateJWT(ID)
+	if err != nil {
+		return "", err
+	}
+	return accessToken, nil
+
+}
+
 func generateJWT(userID int) (string, error) {
 	fmt.Println(userID)
 	claims := jwt.MapClaims{
@@ -108,7 +122,7 @@ func generateJWT(userID int) (string, error) {
 func generateRefreshToken(userID int) (string, error) {
 	claims := jwt.MapClaims{
 		"sub": strconv.Itoa(userID),
-		"exp": time.Now().Add(time.Hour * 24 * 7).Unix(),
+		"exp": time.Now().Add(time.Second * 10).Unix(),
 	}
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
 	return token.SignedString(refreshSecret)

@@ -22,7 +22,6 @@ var refreshSecret = []byte("your_refresh_secret")
 func (m *Middleware) JWT(c *fiber.Ctx) error {
 
 	tokenString := c.Cookies("access_token")
-	fmt.Println("JWT", tokenString)
 	if tokenString == "" {
 		logrus.Warn("Token is missing")
 		return c.Status(http.StatusUnauthorized).JSON(fiber.Map{
