@@ -76,29 +76,43 @@ func (e *Endpoints) Login(c *fiber.Ctx) error {
 			"message": "Login failed",
 		})
 	}
+	ch := make(chan bool)
 
 	// Установка токенов в HTTP-only куки - так потому что на разныж хостах
-	c.Cookie(&fiber.Cookie{
-		Name:     "access_token",
-		Value:    access_token,
-		Expires:  time.Now().Add(time.Hour * 100 * 100),
-		HTTPOnly: true,
-		Secure:   false,
-		SameSite: "None",
-	})
+	go func(с *fiber.Ctx, ch chan bool) {
+		c.Cookie(&fiber.Cookie{
+			Name:     "access_token",
+			Value:    access_token,
+			Expires:  time.Now().Add(time.Hour * 100 * 100),
+			HTTPOnly: true,
+			Secure:   false,
+			SameSite: "None",
+		})
 
-	c.Cookie(&fiber.Cookie{
-		Name:     "refresh_token",
-		Value:    refresh_token,
-		Expires:  time.Now().Add(time.Hour * 100 * 100),
-		HTTPOnly: true,
-		Secure:   false,
-		SameSite: "None",
-	})
+		c.Cookie(&fiber.Cookie{
+			Name:     "refresh_token",
+			Value:    refresh_token,
+			Expires:  time.Now().Add(time.Hour * 100 * 100),
+			HTTPOnly: true,
+			Secure:   false,
+			SameSite: "None",
+		})
 
-	return c.Status(http.StatusOK).JSON(fiber.Map{
-		"status": "OK",
-	})
+		ch <- true
+	}(c, ch)
+
+	select {
+	case <-ch:
+
+		return c.Status(http.StatusOK).JSON(fiber.Map{
+			"status": "OK",
+		})
+	case <-time.After(2 * time.Second):
+
+		return c.Status(http.StatusBadRequest).JSON(fiber.Map{
+			"status": "LongCookie",
+		})
+	}
 
 }
 
