@@ -128,7 +128,7 @@ func TestLogin(t *testing.T) {
 			},
 			expectedStatus: http.StatusOK,
 			expectedResponse: map[string]interface{}{
-				"status": "OK",
+				"status": "OK", "access_token": "token",
 			},
 		},
 		{
