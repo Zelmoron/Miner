@@ -106,7 +106,7 @@ func (e *Endpoints) Login(c *fiber.Ctx) error {
 	case <-ch:
 
 		return c.Status(http.StatusOK).JSON(fiber.Map{
-			"status": "OK",
+			"status": "OK", "access_token": access_token,
 		})
 	case <-time.After(2 * time.Second):
 

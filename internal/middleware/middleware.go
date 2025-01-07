@@ -1,7 +1,6 @@
 package middleware
 
 import (
-	"fmt"
 	"net/http"
 	"os"
 
@@ -26,7 +25,6 @@ func (m *Middleware) JWT(c *fiber.Ctx) error {
 			"message": "Token is missing",
 		})
 	}
-	logrus.Info(tokenString)
 	// Парсим токен
 	token, err := jwt.Parse(tokenString, func(token *jwt.Token) (interface{}, error) {
 		// Проверяем, что алгоритм токена - HMAC
@@ -74,7 +72,6 @@ func (m *Middleware) JWT(c *fiber.Ctx) error {
 func (m *Middleware) REFRESH(c *fiber.Ctx) error {
 
 	tokenString := c.Cookies("refresh_token")
-	fmt.Println(tokenString)
 	if tokenString == "" {
 		logrus.Warn("Token is missing")
 		return c.Status(http.StatusUnauthorized).JSON(fiber.Map{
