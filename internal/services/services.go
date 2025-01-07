@@ -5,6 +5,7 @@ import (
 	"WebSocket/internal/requests"
 	"WebSocket/internal/utils"
 	"errors"
+	"fmt"
 	"strconv"
 
 	"github.com/sirupsen/logrus"
@@ -101,4 +102,15 @@ func (s *Services) NewJWT(id interface{}) (string, error) {
 	}
 	return accessToken, nil
 
+}
+
+func (s *Services) Delete(id string) error {
+
+	if !<-s.database.DeleteUser(id) {
+		return errors.New("Bad Delete")
+	}
+
+	fmt.Println("Дождался")
+
+	return nil
 }

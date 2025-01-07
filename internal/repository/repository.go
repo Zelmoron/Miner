@@ -134,3 +134,28 @@ func (r *Repository) AddToken(refresh string, id int) error {
 
 	return nil
 }
+
+func (r *Repository) DeleteUser(id string) chan bool {
+
+	ch1 := make(chan bool)
+
+	go func(ch1 chan<- bool) {
+		fmt.Println("А теперь тут")
+		query := "DELETE FROM users WHERE id = $1"
+		result, err := r.DB.Exec(query, id)
+
+		rowsAffected, err := result.RowsAffected()
+		if err != nil {
+			ch1 <- false
+
+		} else if rowsAffected == 0 {
+			ch1 <- false
+		} else {
+			ch1 <- true
+		}
+
+	}(ch1)
+	fmt.Println("Я тут")
+	return ch1
+
+}

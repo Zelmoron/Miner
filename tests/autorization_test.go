@@ -46,6 +46,10 @@ func (m *MockServices) NewJWT(interface{}) (string, error) {
 	return "", nil
 }
 
+func (m MockServices) Delete(string) error {
+	return nil
+}
+
 func TestRegistration(t *testing.T) {
 	app := fiber.New()
 	mockServices := &MockServices{}

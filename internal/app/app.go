@@ -47,9 +47,10 @@ func (a *App) routers() {
 	}))
 	a.app.Use(logger.New(), recover.New())
 
-	public := a.app.Group("/")
+	public := a.app.Group("")
 	public.Post("/registration", a.endpoints.Registration)
 	public.Post("/login", a.endpoints.Login)
+	public.Delete("/delete/:id", a.endpoints.Delete)
 
 	jwt := a.app.Group("/jwt")
 	jwt.Use(a.middleware.JWT)

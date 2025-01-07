@@ -16,6 +16,7 @@ type Services interface {
 	Registration(requests.UserRegRequest) error
 	Login(requests.UserLoginRequest) (string, string, error)
 	NewJWT(interface{}) (string, error)
+	Delete(string) error
 }
 type Endpoints struct {
 	services Services
@@ -150,4 +151,20 @@ func (e *Endpoints) Refresh(c *fiber.Ctx) error {
 	return c.Status(http.StatusOK).JSON(fiber.Map{
 		"name": c.Locals("sub"),
 	})
+}
+
+func (e *Endpoints) Delete(c *fiber.Ctx) error {
+
+	id := c.Params("id")
+
+	err := e.services.Delete(id)
+	if err != nil {
+		return c.Status(http.StatusBadRequest).JSON(fiber.Map{
+			"status": "Delete fatal",
+		})
+	}
+	return c.Status(200).JSON(fiber.Map{
+		"status": "Delete",
+	})
+
 }
