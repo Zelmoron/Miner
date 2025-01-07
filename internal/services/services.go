@@ -3,12 +3,10 @@ package services
 import (
 	"WebSocket/internal/repository"
 	"WebSocket/internal/requests"
+	"WebSocket/internal/utils"
 	"errors"
-	"fmt"
 	"strconv"
-	"time"
 
-	"github.com/dgrijalva/jwt-go"
 	"github.com/sirupsen/logrus"
 	password "github.com/vzglad-smerti/password_hash"
 )
@@ -22,9 +20,6 @@ func New(database *repository.Repository) *Services {
 		database: database,
 	}
 }
-
-var jwtSecret = []byte("your_jwt_secret")         // Замените на свой секрет
-var refreshSecret = []byte("your_refresh_secret") // Замените на свой секрет
 
 func (s *Services) Registration(user requests.UserRegRequest) error {
 
@@ -76,12 +71,12 @@ func (s *Services) Login(user requests.UserLoginRequest) (string, string, error)
 		return "", "", errors.New("Password false")
 	}
 
-	accessToken, err := generateJWT(id)
+	accessToken, err := utils.GenerateJWT(id)
 	if err != nil {
 		return "", "", err
 	}
 
-	refreshToken, err := generateRefreshToken(id)
+	refreshToken, err := utils.GenerateRefreshToken(id)
 	if err != nil {
 		return "", "", err
 	}
@@ -100,30 +95,10 @@ func (s *Services) NewJWT(id interface{}) (string, error) {
 	if err != nil {
 		return "", err
 	}
-	accessToken, err := generateJWT(ID)
+	accessToken, err := utils.GenerateJWT(ID)
 	if err != nil {
 		return "", err
 	}
 	return accessToken, nil
 
-}
-
-func generateJWT(userID int) (string, error) {
-	fmt.Println(userID)
-	claims := jwt.MapClaims{
-		"sub": strconv.Itoa(userID),
-		"exp": time.Now().Add(time.Second * 5).Unix(),
-	}
-	token := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
-	return token.SignedString(jwtSecret)
-}
-
-// Функция для генерации refresh токена
-func generateRefreshToken(userID int) (string, error) {
-	claims := jwt.MapClaims{
-		"sub": strconv.Itoa(userID),
-		"exp": time.Now().Add(time.Second * 10).Unix(),
-	}
-	token := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
-	return token.SignedString(refreshSecret)
 }

@@ -148,6 +148,6 @@ func (e *Endpoints) Refresh(c *fiber.Ctx) error {
 	wg.Wait()
 
 	return c.Status(http.StatusOK).JSON(fiber.Map{
-		"refresh": c.Locals("sub"),
+		"name": c.Locals("sub"),
 	})
 }

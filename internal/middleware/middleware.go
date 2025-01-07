@@ -3,6 +3,7 @@ package middleware
 import (
 	"fmt"
 	"net/http"
+	"os"
 
 	"github.com/gofiber/fiber/v2"
 	"github.com/golang-jwt/jwt/v4"
@@ -16,9 +17,6 @@ func New() *Middleware {
 	return &Middleware{}
 }
 
-var jwtSecret = []byte("your_jwt_secret")
-var refreshSecret = []byte("your_refresh_secret")
-
 func (m *Middleware) JWT(c *fiber.Ctx) error {
 
 	tokenString := c.Cookies("access_token")
@@ -28,6 +26,7 @@ func (m *Middleware) JWT(c *fiber.Ctx) error {
 			"message": "Token is missing",
 		})
 	}
+	logrus.Info(tokenString)
 	// Парсим токен
 	token, err := jwt.Parse(tokenString, func(token *jwt.Token) (interface{}, error) {
 		// Проверяем, что алгоритм токена - HMAC
@@ -35,7 +34,7 @@ func (m *Middleware) JWT(c *fiber.Ctx) error {
 			logrus.Warn("invalid signing method")
 			return nil, jwt.NewValidationError("invalid signing method", jwt.ValidationErrorMalformed)
 		}
-		return jwtSecret, nil
+		return []byte(os.Getenv("jwtsecret")), nil
 	})
 
 	if err != nil || !token.Valid {
@@ -90,7 +89,7 @@ func (m *Middleware) REFRESH(c *fiber.Ctx) error {
 			logrus.Warn("invalid signing method")
 			return nil, jwt.NewValidationError("invalid signing method", jwt.ValidationErrorMalformed)
 		}
-		return refreshSecret, nil
+		return []byte(os.Getenv("refreshSecret")), nil
 	})
 
 	if err != nil || !token.Valid {
