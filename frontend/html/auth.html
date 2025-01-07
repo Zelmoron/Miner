@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <link href="../css/auth.css" rel="stylesheet" >
+</head>
+<body>
+    <div class="container">
+        <div class="forms-container">
+            <div class="form login-form">
+                <h2>Вход</h2>
+                <form id="loginForm">
+                    <div class="input-group">
+                        <input type="email" name="email" placeholder="Email" required>
+                    </div>
+                    <div class="input-group">
+                        <input type="password" name="password" placeholder="Пароль" required>
+                    </div>
+                    <div class="error-message" id="loginError"></div>
+                    <button type="submit">Войти</button>
+                </form>
+                <div class="switch-form">
+                    <a onclick="toggleForm()">Нет аккаунта? Зарегистрироваться</a>
+                </div>
+            </div>
+
+            <div class="form register-form">
+                <h2>Регистрация</h2>
+                <form id="registerForm">
+                    <div class="input-group">
+                        <input type="text" name="name" placeholder="Имя" required>
+                    </div>
+                    <div class="input-group">
+                        <input type="email" name="email" placeholder="Email" required>
+                    </div>
+                    <div class="input-group">
+                        <input type="password" name="password" placeholder="Пароль" required>
+                    </div>
+                    <div class="input-group">
+                        <input type="password" name="confirmPassword" placeholder="Подтвердите пароль" required>
+                    </div>
+                    <div class="error-message" id="registerError"></div>
+                    <button type="submit">Зарегистрироваться</button>
+                </form>
+                <div class="switch-form">
+                    <a onclick="toggleForm()">Уже есть аккаунт? Войти</a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="../js/auth.js"></script>
+</body>
+</html>
