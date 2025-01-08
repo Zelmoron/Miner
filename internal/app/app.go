@@ -41,7 +41,7 @@ func New() *App {
 func (a *App) routers() {
 
 	a.app.Use(cors.New(cors.Config{
-		AllowOrigins:     "http://127.0.0.1:5500", // Change this to your frontend's URL
+		AllowOrigins:     "http://127.0.0.1:5500",
 		AllowHeaders:     "Origin, Content-Type, Accept, Authorization",
 		AllowCredentials: true,
 	}))
