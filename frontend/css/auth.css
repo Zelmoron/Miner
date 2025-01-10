@@ -20,7 +20,6 @@ body {
     overflow: hidden;
 }
 
-/* Добавляем стили для сообщений об ошибках */
 .error-message {
     color: #dc3545;
     font-size: 14px;
