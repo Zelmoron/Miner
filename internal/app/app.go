@@ -11,6 +11,7 @@ import (
 	"github.com/gofiber/fiber/v2/middleware/cors"
 	"github.com/gofiber/fiber/v2/middleware/logger"
 	"github.com/gofiber/fiber/v2/middleware/recover"
+	"github.com/sirupsen/logrus"
 )
 
 type App struct {
@@ -62,7 +63,7 @@ func (a *App) routers() {
 
 }
 func (a *App) Run() {
-
+	logrus.Info("Start server")
 	a.app.Listen(os.Getenv("port"))
 
 }
